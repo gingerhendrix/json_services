@@ -7,7 +7,7 @@ end
 
 namespace :deploy do
   task :build do
-    sh "git archive --format=tar HEAD | gzip > #{archive}"
+    sh "tar c . | gzip > #{archive}"
   end
 
   remote_task :push => :build do

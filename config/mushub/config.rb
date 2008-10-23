@@ -1,4 +1,4 @@
 
-configatron.couchdb.server = "localhost"
+configatron.couchdb.server = "mushub.com"
 configatron.couchdb.port = "5984"
 

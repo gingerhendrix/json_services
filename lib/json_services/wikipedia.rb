@@ -1,4 +1,4 @@
-
+require 'open-uri'
 
 np_namespace 'wikipedia' do |ns|
       

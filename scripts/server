@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# Mushub Json Proxy startup script
+#
+
+require 'rubygems'
+
+$:.unshift(File.dirname(__FILE__) + "/../lib") 
+
+Dir.glob(File.dirname(__FILE__) + '/../vendor/gems/*') { |d|
+  $:.unshift d + "/lib"
+  require d + "/lib/" + File.basename(d) + ".rb"  
+}
+
+include Server::DSL
+
+Dir.glob(File.dirname(__FILE__) + '/../lib/json_services/*.rb') { 
+  |f| require f 
+}
+
+# Rack::ShowExceptions.new
+app = Rack::Reloader.new Server::Server.new 
+
+Rack::Handler::Mongrel.run(app, :Port => 4567) do |server|
+  puts "==  mushub_services running on port 4567"
+  trap("INT") do
+    puts "\n== Good night."
+    exit()
+  end
+end
+

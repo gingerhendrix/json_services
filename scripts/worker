@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+# Mushub Worker startup script
+#
+
+require File.dirname(__FILE__) + '/../config/startup.rb'
+
+worker = UrlQueue::QueueDaemon.new
+
+worker.do_loop

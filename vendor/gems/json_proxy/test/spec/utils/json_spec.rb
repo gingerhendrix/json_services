@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 class Dummy
   attr_accessor :atrr1
@@ -24,6 +24,18 @@ describe "JSON" do
     test_obj = Dummy.new "blah", 3
     deserialized_obj = JSON.parse test_obj.to_json
     deserialized_obj.should == {"attr1" => "blah", "attr2" => 3}
+  end
+  
+  it "should correctly serialize an array" do
+    test_obj = ["one", "two", "three"]
+    deserialized_obj = JSON.parse test_obj.to_json
+    deserialized_obj.should == test_obj
+  end
+  
+  it "should correctly serialize a hash containing an array" do
+    test_obj = HashWithIndifferentAccess.new :prop1 => ["one", "two", "three"]
+    deserialized_obj = JSON.parse test_obj.to_json
+    deserialized_obj.should == test_obj
   end
   
   it "should correctly serialize a hash containing objects" do

@@ -2,11 +2,11 @@
 God.watch do |w|
 
   w.name = "starling" 
-  w.group = "starlings" 
   w.uid = "root" 
   w.gid = "root" 
   w.interval = 30.seconds # default
   w.start = "/usr/bin/starling -P /var/run/starling/starling.pid -d" 
+  w.stop = "kill `cat /var/run/starling/starling.pid`"
   w.start_grace = 20.seconds
   w.restart_grace = 20.seconds
   w.pid_file = "/var/run/starling/starling.pid" 

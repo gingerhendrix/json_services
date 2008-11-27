@@ -1,8 +1,6 @@
 # run with:  god -c /path/to/god.conf
 # 
 
-APP_ROOT = "/var/web/apps/mushub_services/current"
-
 God.watch do |w|
   w.name = "mushub_services_worker"
 

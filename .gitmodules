@@ -7,3 +7,6 @@
 [submodule "vendor/gems/rbrainz"]
 	path = vendor/gems/rbrainz
 	url = git://github.com/gingerhendrix/rbrainz
+[submodule "vendor/gems/yahoo-music"]
+	path = vendor/gems/yahoo-music
+	url = git://github.com/mattt/yahoo-music.git

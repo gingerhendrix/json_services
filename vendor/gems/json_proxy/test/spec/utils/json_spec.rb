@@ -32,6 +32,16 @@ describe "JSON" do
     deserialized_obj.should == test_obj
   end
   
+  it "should correctly serialize an Exception" do
+    test_obj = StandardError.new "message"
+    backtrace = caller
+    test_obj.set_backtrace(backtrace)
+    deserialized_obj = JSON.parse test_obj.to_json
+    deserialized_obj["name"].should == "StandardError"
+    deserialized_obj["message"].should == "message"
+    deserialized_obj["backtrace"].should == backtrace
+  end
+  
   it "should correctly serialize a hash containing an array" do
     test_obj = HashWithIndifferentAccess.new :prop1 => ["one", "two", "three"]
     deserialized_obj = JSON.parse test_obj.to_json
@@ -44,7 +54,5 @@ describe "JSON" do
     deserialized_obj.should == {"objProp" => {"attr1" => "blah", "attr2" => 3}, "otherProp" => "woo"}
 
   end
-  
-  
 
 end

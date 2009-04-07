@@ -8,7 +8,7 @@ require 'activesupport'
 require 'configatron'
 
 module JsonProxy
-  VERSION = '0.5.0'
+  VERSION = '0.5.2'
   NAME = "json_proxy"
   APP_VERSION = 2
 end
@@ -24,6 +24,7 @@ require 'server/handlers/cache_handler.rb'
 require 'server/handlers/exception_handler.rb'
 require 'server/handlers/json_handler.rb'
 require 'server/handlers/queue_handler.rb'
+require 'server/handlers/route_handler.rb'
 
 require 'server/server.rb'
 require 'server/route.rb'

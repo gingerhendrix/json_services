@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-
+#
+# TODO: OMGWTF - These tests smell worse than next door neighbours extractor vent.
+#
 describe "Cache Handler#action" do
 
 
@@ -19,6 +21,11 @@ describe "Cache Handler#action" do
     @request.stub!(:args)
     @request.stub!(:force?)
     @response = mock("response")
+    
+    @errors = mock("errors")
+ 	   
+    @response.stub!(:errors).and_return(@errors)
+    @response.stub!(:status=)
 
     @block_body = mock("block_body")
     @block_body.stub!(:yielded)
@@ -98,13 +105,17 @@ describe "Cache Handler#action" do
       
       it "should store result" do
         body = {}
+        errors = [StandardError.new]
         @response.should_receive(:body).and_return(body)
-
+        @response.should_receive(:errors).and_return(errors)
+        
         @cache.should_receive(:store).with("key", anything())  do |key , json|
           cacheObj = JSON.parse json
           cacheObj['mtime'].should be_kind_of(Numeric)
           cacheObj['ctime'].should be_kind_of(Numeric)
           cacheObj['app_version'].should be(JsonProxy::APP_VERSION)
+          cacheObj['errors'].should be_kind_of(Array)
+          cacheObj['data'].should be_kind_of(Hash)
         end
          action
       end
@@ -116,6 +127,7 @@ describe "Cache Handler#action" do
       @cacheObj = mock("cacheObj")
       @cacheObj.stub!('[]').with('data')
       @cacheObj.stub!('[]').with('mtime')
+      @cacheObj.stub!(:[]).with('errors').and_return([:errors])
       
       @handler.stub!(:expired?).and_return(false)
       @cache.stub!(:fetch).and_return("cacheJSON")
@@ -123,6 +135,7 @@ describe "Cache Handler#action" do
       JSON.stub!(:parse).with("cacheJSON").and_return(@cacheObj)
       
       @response.stub!(:body=)
+      @errors.stub!(:concat)
     end
   
     it "should parse JSON result" do
@@ -145,6 +158,19 @@ describe "Cache Handler#action" do
         @cacheObj.should_receive('[]').with('data').and_return(:data)
         @response.should_receive(:body=).with(:data)
         action
+      end
+      
+      it "should combine the errors" do
+        @cacheObj.should_receive('[]').with('errors').and_return([:errors])
+        @errors.should_receive(:concat).with([:errors])
+        action
+      end
+      
+      it "should set the status to 500 if there are errors" do
+        @cacheObj.should_receive('[]').with('errors').and_return([:errors])
+        @response.should_receive('status=').with(500)
+        action
+
       end
       
       it "should not yield" do
@@ -184,7 +210,11 @@ describe "Cache Handler#action" do
                
         it "should store result" do
           body = {}
+          errors = [StandardError.new]
+          
           @response.should_receive(:body).and_return(body)
+          @response.should_receive(:errors).and_return(errors)
+          
           @cacheObj.should_receive('[]').with('ctime').and_return("ctime")
           @cacheObj.should_receive('[]').with('_id').and_return("id")
           @cacheObj.should_receive('[]').with('_rev').and_return("rev")
@@ -196,6 +226,8 @@ describe "Cache Handler#action" do
             cacheObj['app_version'].should be(JsonProxy::APP_VERSION)
             cacheObj['_rev'].should =="rev"
             cacheObj['_id'].should =="id"
+            cacheObj['errors'].should be_kind_of(Array)
+            cacheObj['data'].should be_kind_of(Hash)
           end
            action
         end

@@ -10,3 +10,6 @@
 [submodule "vendor/gems/yahoo-music"]
 	path = vendor/gems/yahoo-music
 	url = git://github.com/mattt/yahoo-music.git
+[submodule "vendor/gems/echonest"]
+	path = vendor/gems/echonest
+	url = git://github.com/gingerhendrix/echonest.git

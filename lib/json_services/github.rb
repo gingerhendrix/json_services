@@ -11,4 +11,16 @@ np_namespace "github" do |ns|
   ns.route "commit", [:username, :repo, :id], {:cache_expiry => 24.hours} do |username, repo, id|
     GitHub::API.commit(username, repo, id)
   end
+  
+
+  # github/all_commits map function:
+  # function(doc) {
+  #   for(var i=0; i<doc.data.length; i++){
+  #     emit([doc.data[i].user, doc.data[i].authored_date], doc.data[i]);
+  #   }
+  # }
+  ns.route "all_commits", [:username], {:cache_expiry => 30.seconds} do |username|
+    db = database("github", "commits")
+    db.view "github/all_commits", :startkey => [username], :endkey => [username, {}]
+  end
 end

@@ -37,9 +37,14 @@ np_namespace "github" do |ns|
      {:repositories => repos}     
   end  
   
-  ns.route "commits_by_month", [:username, :project] do |username, project|
-      db = database("github", "commits")
-      db.view "github/commits_by_month", :group => true, :group_level => 3, :startkey => [username, project], :endkey => [username, project, {}]
+  ns.route "all_commit_counts_by_month", [:username] do |username|
+    db = database("github", "commits")
+    db.view "github/commits_by_month", :group => true, :group_level => 3, :startkey => [username], :endkey => [username, {}]
+  end
+  
+  ns.route "commit_counts_by_month", [:username, :project] do |username, project|
+    db = database("github", "commits")
+    db.view "github/commits_by_month", :group => true, :group_level => 3, :startkey => [username, project], :endkey => [username, project, {}]
   end
 
   # github/all_commits map function:

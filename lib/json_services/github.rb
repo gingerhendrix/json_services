@@ -37,8 +37,11 @@ np_namespace "github" do |ns|
      {:repositories => repos}     
   end  
   
-  ns.route "all_commits_by_month", [:username] do |username|
-  
+  ns.route "all_commits_by_month", [:username, :year, :month] do |username, year, month|
+    #TODO 1. could this be rewritten by adding the doc to the key and using groupLevel=2 and no reduce function
+    #TODO 2. this should also sort by date - 1.1.1 should accomplish this
+    db = database("github", "commits")
+    db.view "github/commits_by_month", :startkey => [username, year, month, {}], :endkey => [username, year, month], :descending => [true]
   end
   
   ns.route "all_commit_counts_by_month", [:username] do |username|

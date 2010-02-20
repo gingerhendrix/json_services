@@ -16,13 +16,12 @@ np_namespace "github" do |ns|
      res = get "user_info", :username => username
      if res.code != '200'
       @response.partial!
-      return
+      return {:repositories => []}
      end
      info = JSON.parse res.body  
      repos = info['data']['repositories'].map {|repo| {:name => repo['name'] } }
      repos.each do |repo|
       res = get "commits", :username => username, :repo => repo[:name]
-#     repo['commits_reponse'] = res
       if res.code == '200'
         begin
           commits = JSON.parse res.body 
@@ -33,6 +32,21 @@ np_namespace "github" do |ns|
      else
         @response.partial!
       end
+     end
+     
+   #  repos = repos.sort do |r1, r2|
+   #      r1['name'] <=> r2['name']
+   #   end
+     repos = repos.sort do |r1, r2|
+       c1 = (r1 && r1['last_commit'] && r1['last_commit']['authored_date']) ? r1['last_commit']['authored_date'] : nil;
+       c2 = (r2 && r2['last_commit'] && r2['last_commit']['authored_date']) ? r2['last_commit']['authored_date'] : nil;
+       if c1.nil?
+         1
+       elsif c2.nil?
+        -1  
+       else
+        c2 <=> c1
+       end
      end
      {:repositories => repos}     
   end  
